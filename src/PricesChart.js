@@ -20,7 +20,8 @@ const GET_PRICES = gql`
       }
       batchId
       volume
-      priceInOwl
+      priceInOwlNumerator
+      priceInOwlDenominator
       createEpoch
     }
   }
@@ -76,9 +77,18 @@ function drawChart(chartRef, prices) {
   // TODO: Represent all tokens
 
   const points = selectedPrices.map(price => {
+    const priceInOwl = new BigNumber(price.priceInOwlNumerator).div(
+      price.priceInOwlDenominator
+    );
+    console.log(
+      "Price",
+      price.priceInOwlNumerator.toString(10),
+      price.priceInOwlDenominator.toString(10),
+      priceInOwl.toString(10)
+    );
     return {
       x: moment(price.createEpoch * 1000).toDate(),
-      y: new BigNumber(price.priceInOwl).div(1e18)
+      y: priceInOwl
     };
   });
 
