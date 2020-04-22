@@ -12,7 +12,13 @@ Chart.defaults.global.animation.duration = 4000;
 
 const GET_PRICES = gql`
   query Prices($tokenId: String!) {
-    prices(where: { token: $tokenId }) {
+    prices(
+      first: 100
+      skip: 0
+      orderBy: batchId
+      orderDirection: desc
+      where: { token: $tokenId }
+    ) {
       token {
         symbol
         address
@@ -70,13 +76,13 @@ function drawChart(chartRef, prices) {
   const selectedPrices = pricesGroupedByToken[filterAddress];
 
   const labels = selectedPrices
-    .map(price => price.createEpoch)
+    .map((price) => price.createEpoch)
     .sort()
-    .map(createEpoch => moment.unix(createEpoch).format(LEGEND_FORMAT));
+    .map((createEpoch) => moment.unix(createEpoch).format(LEGEND_FORMAT));
 
   // TODO: Represent all tokens
 
-  const points = selectedPrices.map(price => {
+  const points = selectedPrices.map((price) => {
     const priceInOwl = new BigNumber(price.priceInOwlNumerator).div(
       price.priceInOwlDenominator
     );
@@ -88,7 +94,7 @@ function drawChart(chartRef, prices) {
     );
     return {
       x: moment(price.createEpoch * 1000).toDate(),
-      y: priceInOwl
+      y: priceInOwl,
     };
   });
 
@@ -110,15 +116,15 @@ function drawChart(chartRef, prices) {
     */
       borderColor: ["rgba(255, 99, 132, 1)"],
       borderWidth: 1,
-      fill: true
-    }
+      fill: true,
+    },
   ];
 
   return new Chart(ctx, {
     type: "line",
     data: {
       labels,
-      datasets: dataSets
+      datasets: dataSets,
     },
     options: {
       // responsive: false
@@ -128,31 +134,31 @@ function drawChart(chartRef, prices) {
           time: {
             parser: timeFormat,
             // round: 'day'
-            tooltipFormat: "ll HH:mm"
+            tooltipFormat: "ll HH:mm",
           },
           scaleLabel: {
             display: true,
-            labelString: "Date"
-          }
-        }
+            labelString: "Date",
+          },
+        },
       },
       hover: {
         mode: "nearest",
-        intersect: false
+        intersect: false,
       },
       tooltips: {
         custom: false,
         mode: "nearest",
-        intersect: false
-      }
-    }
+        intersect: false,
+      },
+    },
   });
 }
 
 const PricesChart = ({ tokenId }) => {
   console.log("tokenId1", tokenId, typeof tokenId);
   const { loading, error, data } = useQuery(GET_PRICES, {
-    variables: { tokenId: tokenId.toString() }
+    variables: { tokenId: tokenId.toString() },
   });
 
   const ref = "testchart";
