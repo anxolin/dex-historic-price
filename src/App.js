@@ -7,7 +7,7 @@ import ApolloClient, { InMemoryCache } from "apollo-boost";
 import "./styles.css";
 
 const client = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/gnosis/dfusion-staging",
+  uri: "https://api.thegraph.com/subgraphs/name/gnosis/protocol",
   cache: new InMemoryCache()
 });
 
@@ -18,7 +18,7 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <div className="App">
-        <h1>dFusion prices</h1>
+        <h1>Gnosis Protocol prices</h1>
         <SelectToken
           onTokenSelected={e => {
             const tokenId = e.target.value;
